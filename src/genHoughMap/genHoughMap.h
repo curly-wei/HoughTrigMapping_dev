@@ -393,23 +393,23 @@ class OutputFilesDAO {
 };
 
 template<size_t r_SL, size_t n_TS_SL>
-struct XYFromCDCPolar { 
+struct OneOverRFromCDCPolar { 
  protected: 
-  constexpr XYFromCDCPolar() : x(), y() {  
+  constexpr OneOverRFromCDCPolar() : x(), y() {  
     for (size_t i = 0; i < n_TS_SL ; ++i) {
       double dou_i = static_cast<double>(i);
-      x.at(i) = r_SL * cos( dou_i * (PI2 / n_TS_SL) );
-      y.at(i) = r_SL * sin( dou_i * (PI2 / n_TS_SL) );
+      double const_term1 = 2 / r_SL;
+      r.at(i) = const_term1 * sin( dou_i * (PI2 / n_TS_SL) );
     }
   }
-  std::array<double,n_TS_SL> x;
-  std::array<double,n_TS_SL> y;
+  std::array<double,n_TS_SL> r;
+  std::array<double,n_TS_SL> phi;
 };
 
 template<size_t r_SL, size_t n_TS_SL>
 struct HCSFromXY : private XYFromCDCPolar<r_SL, n_TS_SL>{ 
  protected: 
-  constexpr HCSFromXY() : XYFromCDCPolar(), r_present(), r_next() { 
+  constexpr HCSFromXY() : OneOverRFromCDCPolar(), r_present(), r_next() { 
     constexpr double dphi = PI2 / kHoughPlane_nx;
     for (size_t j = 0; j < kHoughPlane_nx; ++j) {
       double phi_present = j*dphi;
