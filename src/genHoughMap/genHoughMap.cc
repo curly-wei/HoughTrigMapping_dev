@@ -41,18 +41,18 @@ API_ATTRI std::string getHDLParamContent(const std::string& file_name) {
   content <<
   kHdlHeader <<
   "package " << file_name << "_param" << " is \n" <<
-  "\tconstant MAX_SL_COUNT_2D_k : integer := " << kSLMaXCount2D <<"; \n" <<
-  "\tconstant MAX_ROW_COUNT_2D_k : integer := " << kHoughPlane_ny <<";" << "\n";
+  "\tconstant MAX_SL_COUNT_2D_k : integer := " << SLConst2D::kSLMaXCount2D <<"; \n" <<
+  "\tconstant MAX_ROW_COUNT_2D_k : integer := " << SLConst2D::kHoughPlaneNY <<";" << "\n";
   
-  for(const auto& i : kSLRange2D) {
+  for(const auto& i : SLConst2D::kSLRange2D) {
     content << 
     "\tconstant N_TS_SL_"<< i <<"_k : integer := " << SLConst2D::getTSMaxCounSL(i) <<"; \n"; 
   }
   content << "\n" <<
-  "\tconstant I_dont_know_k : integer := " << kHoughPlaneRowSize <<"; \n\n" <<  
+  "\tconstant I_dont_know_k : integer := " << SLConst2D::kHoughPlaneRowSize <<"; \n\n" <<  
   "\ttype TS_Data_t is record " << "\n";
   
-  for(const auto& i : kSLRange2D) {
+  for(const auto& i : SLConst2D::kSLRange2D) {
     content << 
     "\t\tSL"<< i <<" : std_logic_vector( ( N_TS_SL_" << i <<" -1) downto 0 ); \n"; 
   }  
@@ -63,7 +63,7 @@ API_ATTRI std::string getHDLParamContent(const std::string& file_name) {
   "\ttype row_data is array ( 0 to (MAX_ROW_COUNT_2D_k-1) ) of \n" <<
   "\t\tstd_logic_vector( (I_dont_know_k -1) downto 0 ); \n" <<
   "\ttype HoughMapping_Result_t is record" << "\n";
-  for(const auto& i : kSLRange2D) {
+  for(const auto& i : SLConst2D::kSLRange2D) {
     content << 
     "\t\tSL"<< i <<" : row_data\n"; 
   }  

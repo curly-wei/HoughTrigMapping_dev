@@ -39,5 +39,11 @@ int main(){
     CDCTrig::getHDLParamContent(hdl_filename) <<
   std::endl;      
 
+  CDCTrig::OneOverRHCSFromCDCPolar<0> l0;
+  
+  for (size_t i = 0; i < CDCTrig::SLConst2D::getTSMaxCounSL(0); i++) {
+    std::cout << i << " : " << l0.r.at(i) <<", "<< l0.phi.at(i) << "\n";
+  }
+  
 
 }

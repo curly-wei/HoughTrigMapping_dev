@@ -24,9 +24,10 @@
 #if !defined(API_ATTRI)
 #  define API_ATTRI
 #endif
-
+#include <iostream>
 #include <fstream>
 #include <array>
+#include <vector>
 #include <cmath>
 #include <string>
 #include <utility>
@@ -41,6 +42,17 @@ static constexpr double PI2 = 2 * M_PI;
 static constexpr double PI_div_2 =  M_PI / 2;
 
 namespace CDCTrig {
+
+
+/**
+ * @brief 
+ * Call machanical parameters of CDC in Belle-II
+ * Regarding all of constant,
+ * @see https://hackmd.io/@BelleII-CDC-Trig-NTU-DeWei/r1BNYq89I 
+ * chapter 2. Constant
+*/
+struct SLConst2D {
+ public:
 
 /**
  * @brief 
@@ -64,43 +76,43 @@ static constexpr std::array<size_t,kSLMaXCount2D> kSLRange2D
 
 /**
  * @brief 
- * Radius of the specific layer
- * Members: { r_SL_0, r_SL_2, r_SL_4, r_SL_6, r_SL_8 }
-*/
-static constexpr std::array<double,kSLMaXCount2D> kRadiusEachSL2DSet
-  { 19.8, 40.16, 62.00, 83.84, 105.68 };
-
-/**
- * @brief 
- * Max count of trigger segment at specific layer
- * Members: { n_TS_SL_0, n_TS_SL_2, n_TS_SL_4, n_TS_SL_6, n_TS_SL_8 }
-*/
-static constexpr std::array<size_t,kSLMaXCount2D> kTSMaxCountsEachSL2DSet
-  { 160, 192, 256, 320, 384 };
-
-/**
- * @brief 
  * The count of x scale(phi) in Hough Plane
 */
-static constexpr size_t kHoughPlane_nx = 160;
+static constexpr size_t kHoughPlaneNX = 160;
 
 /**
  * @brief 
  * The count of y scale(r) in Hough Plane
  */
-static constexpr size_t kHoughPlane_ny = 16;
-
-static constexpr size_t kHoughPlaneRowSize = kHoughPlane_nx/4;
+static constexpr size_t kHoughPlaneNY = 16;
 
 /**
  * @brief 
- * Call machanical parameters of CDC in Belle-II
- * Regarding all of constant,
- * @see https://hackmd.io/@BelleII-CDC-Trig-NTU-DeWei/r1BNYq89I 
- * chapter 2. Constant
+ * The minimun value of x in Hough Plane
 */
-struct SLConst2D {
- public:
+static constexpr double kHoughPlaneMinX = -M_PI;
+
+/**
+ * @brief 
+ * The minimun value of y in Hough Plane
+ */
+static constexpr double kHoughPlaneMinY = 16;
+
+/**
+ * @brief 
+ * The maximun value of x in Hough Plane
+*/
+static constexpr double kHoughPlaneMaxX = M_PI;
+
+/**
+ * @brief 
+ * The maximun value of y in Hough Planee
+ */
+static constexpr double kHoughPlaneMaxY = 16;
+
+static constexpr size_t kHoughPlaneRowSize = kHoughPlaneNX/4;
+
+
   /**
    * @brief 
    * Get the radius of the specific layer (input only even value 0~8)
@@ -144,6 +156,23 @@ struct SLConst2D {
   SLConst2D operator=(const SLConst2D&) = delete;
   SLConst2D(SLConst2D&& ) = delete;
   SLConst2D& operator=(SLConst2D&&) = delete;
+
+ private:
+/**
+ * @brief 
+ * Radius of the specific layer
+ * Members: { r_SL_0, r_SL_2, r_SL_4, r_SL_6, r_SL_8 }
+*/
+static constexpr std::array<double,kSLMaXCount2D> kRadiusEachSL2DSet
+  { 19.8, 40.16, 62.00, 83.84, 105.68 };
+
+/**
+ * @brief 
+ * Max count of trigger segment at specific layer
+ * Members: { n_TS_SL_0, n_TS_SL_2, n_TS_SL_4, n_TS_SL_6, n_TS_SL_8 }
+*/
+static constexpr std::array<size_t,kSLMaXCount2D> kTSMaxCountsEachSL2DSet
+  { 160, 192, 256, 320, 384 };
 }; 
 
 /**
@@ -392,46 +421,31 @@ class OutputFilesDAO {
   OutputFiles of_;
 };
 
-template<size_t r_SL, size_t n_TS_SL>
-struct OneOverRFromCDCPolar { 
- protected: 
-  constexpr OneOverRFromCDCPolar() : x(), y() {  
-    for (size_t i = 0; i < n_TS_SL ; ++i) {
+/**
+ * @brief 
+ * Generate Hough-Curve-Space(HSC) from CDC-Ploar-Space in compile time
+ * 
+ * @tparam SL_n 
+ *  The number on spceific Super Layer, which in {0, 2, 4, 6, 8}
+ */
+template <size_t SL_n>
+struct OneOverRHCSFromCDCPolar { 
+ public: 
+  constexpr OneOverRHCSFromCDCPolar() {  
+    constexpr double dou_n_TS_SL = static_cast<double>( SLConst2D::getTSMaxCounSL(SL_n) );
+    constexpr double peak_to_peak_x = SLConst2D::kHoughPlaneMaxX - SLConst2D::kHoughPlaneMinX;
+    constexpr double const_term_r = 2.0 / SLConst2D::getRadiusSL(SL_n);
+    constexpr double const_term_phi = peak_to_peak_x / dou_n_TS_SL;
+    for (size_t i = 0; i < SLConst2D::getTSMaxCounSL(SL_n) ; ++i) {
       double dou_i = static_cast<double>(i);
-      double const_term1 = 2 / r_SL;
-      r.at(i) = const_term1 * sin( dou_i * (PI2 / n_TS_SL) );
+      r.at(i) = const_term_r * sin( dou_i * const_term_phi );
+      phi.at(i) = const_term_phi * dou_i + SLConst2D::kHoughPlaneMinX;
     }
   }
-  std::array<double,n_TS_SL> r;
-  std::array<double,n_TS_SL> phi;
+  std::array<double, SLConst2D::getTSMaxCounSL(SL_n)> r;
+  std::array<double, SLConst2D::getTSMaxCounSL(SL_n)> phi;
 };
 
-template<size_t r_SL, size_t n_TS_SL>
-struct HCSFromXY : private XYFromCDCPolar<r_SL, n_TS_SL>{ 
- protected: 
-  constexpr HCSFromXY() : OneOverRFromCDCPolar(), r_present(), r_next() { 
-    constexpr double dphi = PI2 / kHoughPlane_nx;
-    for (size_t j = 0; j < kHoughPlane_nx; ++j) {
-      double phi_present = j*dphi;
-      double phi_next = (j+1)*dphi;
-      for (size_t k = 0; k < n_TS_SL ; ++k) {
-        double numerator = x[k]*x[k] + y[k]*y[k];
-        double denominator_phi_present = 2*( x[k]*cos(phi_present) + y[k]*sin(phi_present) );
-        double denominator_phi_next = 2*( x[k]*cos(phi_next) + y[k]*sin(phi_next) );
-        r_present.at(k) = numerator / denominator_phi_present;
-        r_next.at(k) = numerator / denominator_phi_next;
-      }
-    }
-  }
-  std::array<double,n_TS_SL> r_present;
-  std::array<double,n_TS_SL> r_next;
-};
-
-void HCSClusterSlopeRule(double r_present, double r_next);
-void MinusNormalRule(std::string& HDLContent);
-void PositiveNormalRule(std::string& HDLContent);
-void MinusInfinityRule(std::string& HDLContent);
-void PositiveInfinityRule(std::string& HDLContent);
 
 
 API_ATTRI std::string getHDLParamContent(const std::string& file_name);
