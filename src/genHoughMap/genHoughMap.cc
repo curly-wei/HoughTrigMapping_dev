@@ -82,21 +82,6 @@ void HCSClusterSlopeRule(double r_present, double r_next) {
   }
 }
 
-void MinusNormalRule(std::string& HDLContent) {
-  
-}
-
-void PositiveNormalRule(std::string& HDLContent) {
-  
-}
-
-void MinusInfinityRule(std::string& HDLContent) {
-  
-}
-
-void PositiveInfinityRule(std::string& HDLContent) {
-  
-}
 
 
 } //namespace CDCTrig 

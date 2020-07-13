@@ -436,7 +436,7 @@ struct OneOverRHCSFromCDCPolar {
     constexpr double peak_to_peak_x = SLConst2D::kHoughPlaneMaxX - SLConst2D::kHoughPlaneMinX;
     constexpr double const_term_r = 2.0 / SLConst2D::getRadiusSL(SL_n);
     constexpr double const_term_phi = peak_to_peak_x / dou_n_TS_SL;
-    for (size_t i = 0; i < SLConst2D::getTSMaxCounSL(SL_n) ; ++i) {
+    for (auto&& i = 0; i < SLConst2D::getTSMaxCounSL(SL_n) ; ++i) {
       double dou_i = static_cast<double>(i);
       r.at(i) = const_term_r * sin( dou_i * const_term_phi );
       phi.at(i) = const_term_phi * dou_i + SLConst2D::kHoughPlaneMinX;
