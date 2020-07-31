@@ -16,9 +16,9 @@ This porject only support 64 bits OS now.
 ![pic1-requirement](./resource/pictures/readmemd/vcpkg-need-1.PNG)
 ![pic2-requirement](./resource/pictures/readmemd/vcpkg-need-2.PNG)
 
-### 1.2 Build this project
+### 1.1.2 Build this project
 
-#### 1.2.1 Debug Mode
+#### 1.1.2.1 Debug Mode
 
 Assume user now at directory of `readme.md`
 
@@ -29,7 +29,7 @@ cmake -G "Visual Studio 16 2019" -DCMAKE_CONFIGURATION_TYPES="Debug;Release" -A 
 cmake --build . --config Debug
 ```
 
-#### 1.2.2 Run after build
+#### 1.1.2.2 Run after build
 
 Assume user now at directory of `build`
 
@@ -45,17 +45,17 @@ Assume user now at directory of `build`
 ./result
 ```
 
-### 2.1 On the Linux
+### 1.2 On the Linux
 
-#### 2.1.1 Requirement
+#### 1.2.1 Requirement
 
 * git
 * cmake (version > 3.13)
 * gcc (version > 8.1)
 
-### 2.2 Build this project
+### 1.2.2 Build this project
 
-#### 2.2.1 Debug Mode
+#### 1.2.2.1 Debug Mode
 
 Assume user now at directory of `readme.md`
 
@@ -66,7 +66,7 @@ cmake -DCMAKE_CONFIGURATION_TYPES="Debug;Release" ../src
 cmake --build . --config Debug
 ```
 
-#### 2.2.2 Run after build
+#### 1.2.2.2 Run after build
 
 Assume user now at directory of `build`
 
@@ -85,3 +85,7 @@ Assume user now at directory of `build`
 ## 2. Technical report
 
 [refer to here](https://hackmd.io/@BelleII-CDC-Trig-NTU-DeWei/r1BNYq89I)
+
+## 3. Papers
+
+[refer to here](https://github.com/curly-wei/belle2-paper)

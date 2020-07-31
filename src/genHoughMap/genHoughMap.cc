@@ -78,7 +78,7 @@ void HCSClusterSlopeRule(double r_present, double r_next) {
   if (r_present < r_next) { // minus
     
   } else if (r_present < r_next) { // plus
-
+    
   }
 }
 
